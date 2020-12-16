@@ -1,5 +1,10 @@
 Few things to note: 
 The code for extracting data from Foresquare API for different business can be obtained from https://developer.foursquare.com/docs/build-with-foursquare/categories/
+For this project we need both Indian Cuisine and Himalayan Cuisine
+Himanlayan Cuisince code is Himalayan Restaurant
+52e81612bcbc57f1066b79fb
+Indian Cusiene code is Indian Restaurant
+4bf58dd8d48988d10f941735
 Folium is used to map the clusters formed from the data base
 
 Problem Statement: 
