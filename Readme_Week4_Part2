@@ -1,0 +1,5 @@
+Few things to note: 
+The code for extracting data from Foresquare API for different business can be obtained from https://developer.foursquare.com/docs/build-with-foursquare/categories/
+Folium is used to map the clusters formed from the data base
+
+Problem Statement: 
