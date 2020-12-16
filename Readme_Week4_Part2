@@ -1,47 +1,24 @@
-Few things to note: 
-The code for extracting data from Foresquare API for different business can be obtained from https://developer.foursquare.com/docs/build-with-foursquare/categories/
-For this project we need both Indian Cuisine and Himalayan Cuisine
-Himanlayan Cuisince code is Himalayan Restaurant
-52e81612bcbc57f1066b79fb
-Indian Cusiene code is Indian Restaurant
-4bf58dd8d48988d10f941735
-Folium is used to map the clusters formed from the data base
-
+Introduction : (BUSINESS PROBLEM)
 ---------------------------------------------------------------------------------------------------
-Problem Statement: 
-Segmenting and Clustering Neighborhoods in New York to start an Indian Cuisine 
----------------------------------------------------------------------------------------------------
-
----------------------------------------------------------------------------------------------------
-Introduction
 My brother with his family has come to stay with me. His family is completely new to the country and 
 they are used to living in India. Their comfort zone is totally different in India and they have challenges 
 to adapt to the new neighborhood. He currently plans to live and work in New York with his primary job. 
 He and his wife plan to start a side business which his wife can run. They want to open an Indian restaurant 
 in New York as more and more people are now migrating from bay area to this neighborhood. This is an opportunity 
-to establish a business in this new neighborhood. The break down is below. Business Problem:
----------------------------------------------------------------------------------------------------
+to establish a business in this new neighborhood. The break down is below. 
 
----------------------------------------------------------------------------------------------------
 NEAR SCHOOLS: His kids and my kids who are of same age group can go to same school and being new to the 
 country and educational system, this will help a lot if we choose the location of the restaurant closer 
 to schools. Catering to business needs and school pick up/drop would be easy that way.
----------------------------------------------------------------------------------------------------
 
----------------------------------------------------------------------------------------------------
 LESS COMMUTE: His wife is still learning to drive. If the neighborhood caters to both driving less and 
 also establishing a restaurant business it will benefit. So public transport should be available too.
----------------------------------------------------------------------------------------------------
 
----------------------------------------------------------------------------------------------------
 NEAR PARK & GROCERY SHOPS: It needs to be closer to grocery shops and parks for a reason. People might 
 be going to park and might decide to eat out which will benefit the business instead of being in a busy high 
 traffic area. Parking could be a hassle amidst high traffic. But a park nearby might help people to take out and sit in the park and eat.
----------------------------------------------------------------------------------------------------
 
----------------------------------------------------------------------------------------------------
 POPULATION: If the neighborhood is densely populated then the business can thrive easily.
----------------------------------------------------------------------------------------------------
 
 Most importantly the location needs to be something where there are not many Indian cuisines present. 
 That way the competition can be managed. The above four points need to be considered for making this business 
@@ -53,5 +30,208 @@ MAIN FOCUS should be on finding a suitable location for opening the Indian resta
 OBJECTIVE: My focus is to recommend using this project assignment which neighborhood is more suitable for my brother
 and family to start the Indian restaurant business in New York.
 ---------------------------------------------------------------------------------------------------
+
+TARGET AUDIENCE
+---------------------------------------------------------------------------------------------------
+Anyone who is interested in opening an Indian restaurant in Manhattan NewYork neighborhood can go thru this project. 
+The code can be modified although not fully perfect (production version) to the needs of individual. 
+
+---------------------------------------------------------------------------------------------------
+Few things to note with respect to code: 
+---------------------------------------------------------------------------------------------------
+The code for extracting data from Foresquare API for different business can be obtained from https://developer.foursquare.com/docs/build-with-foursquare/categories/
+For this project we need both Indian Cuisine and Himalayan Cuisine
+Himanlayan Cuisince code is Himalayan Restaurant
+52e81612bcbc57f1066b79fb
+Indian Cusiene code is Indian Restaurant
+4bf58dd8d48988d10f941735
+Folium is used to map the clusters formed from the data base
+
+  
+Data where you describe the data that will be used to solve the problem and the source of the data.
+---------------------------------------------------------------------------------------------------
+We need to get the data first for Manhattan neighborhood. 
+
+Data was obtained using the below command. 
+!wget -q -O 'newyork_data.json' https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-DS0701EN-SkillsNetwork/labs/newyork_data.json
+print('Data downloaded!')
+
+Based on the latitude and longitude from the above Newyork data set, we can extract only the Manhattan neighborhood data. 
+
+Borough	Neighborhood	Latitude	Longitude
+0	Bronx	Wakefield	40.894705	-73.847201
+1	Bronx	Co-op City	40.874294	-73.829939
+2	Bronx	Eastchester	40.887556	-73.827806
+3	Bronx	Fieldston	40.895437	-73.905643
+4	Bronx	Riverdale	40.890834	-73.912585
+
+We need to get all the Indian Cuisince details and Himalayan Cuisine details using the Foresquare account as below. 
+#https://developer.foursquare.com/docs/resources/categories
+#Indian Cuisine = 4bf58dd8d48988d10f941735 
+neighborhoods = neighborhoods[neighborhoods['Borough'] == 'Manhattan'].reset_index(drop=True)
+newyork_Indian_cuisine = getNearbyIndianCuisines(names=neighborhoods['Neighborhood'], latitudes=neighborhoods['Latitude'], longitudes=neighborhoods['Longitude'], radius=1000, categoryIds='4bf58dd8d48988d10f941735')
+newyork_Indian_cuisine.head()
+newyork_Indian_cuisine.shape
+
+#https://developer.foursquare.com/docs/resources/categories
+#Himalayan Cuisine = 52e81612bcbc57f1066b79fb
+neighborhoods = neighborhoods[neighborhoods['Borough'] == 'Manhattan'].reset_index(drop=True)
+newyork_Indian_cuisine2 = getNearbyIndianCuisines(names=neighborhoods['Neighborhood'], latitudes=neighborhoods['Latitude'], longitudes=neighborhoods['Longitude'], radius=1000, categoryIds='52e81612bcbc57f1066b79fb')
+newyork_Indian_cuisine2.head()
+newyork_Indian_cuisine2.shape
+
+We can further perform data wrangling and clean up the above obtained data and then form cluster analysis on that data for further review. 
+
+Methodology section which represents the main component of the report where you discuss and describe any exploratory data analysis that you did, 
+any inferential statistical testing that you performed, if any, and what machine learnings were used and why.
+--------------------------------------------------------------------------------------------------------------------------------------------------
+The statistical testing and machine learning is not needed for this situation because the data was so clearly evident that there are two clusters
+which can be good location to start the restaurants. Analyzing the data also has enough supporting data. So ML is not needed for this problem to come
+to a recommendation. 
+
+There are 39 unique locations that can be filtered based on the total Newyork Manhattan data. These 39 locations also have restaurant information to it. 
+neighborhoods_venues_sorted.shape
+(39, 11)
+neighborhoods_venues_sorted[neighborhoods_venues_sorted['1st Most Common Venue'].str.contains("Restaurant")] 
+Neighborhood	1st Most Common Venue	2nd Most Common Venue	3rd Most Common Venue	4th Most Common Venue	5th Most Common Venue	6th Most Common Venue	7th Most Common Venue	8th Most Common Venue	9th Most Common Venue	10th Most Common Venue
+0	Battery Park City	Indian Restaurant	Food Truck	Tapas Restaurant	Vegetarian / Vegan Restaurant	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place	Dumpling Restaurant
+1	Carnegie Hill	Indian Restaurant	Grocery Store	North Indian Restaurant	Indian Chinese Restaurant	Food Court	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place
+2	Central Harlem	Indian Restaurant	Vegetarian / Vegan Restaurant	Food Truck	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place	Dumpling Restaurant	Food Court
+3	Chelsea	Indian Restaurant	Food Truck	Vegetarian / Vegan Restaurant	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place	Dumpling Restaurant	Food Court
+4	Chinatown	Indian Restaurant	North Indian Restaurant	Deli / Bodega	Dosa Place	Himalayan Restaurant	Vegetarian / Vegan Restaurant	Food Court	Burrito Place	Chaat Place	Diner
+5	Civic Center	Indian Restaurant	Food Truck	Dosa Place	Tapas Restaurant	Vegetarian / Vegan Restaurant	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dumpling Restaurant
+6	Clinton	Indian Restaurant	Food Truck	South Indian Restaurant	Diner	Dumpling Restaurant	Vegetarian / Vegan Restaurant	Burrito Place	Chaat Place	Deli / Bodega	Dosa Place
+7	East Harlem	Indian Restaurant	Vegetarian / Vegan Restaurant	Food Truck	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place	Dumpling Restaurant	Food Court
+8	East Village	Indian Restaurant	Deli / Bodega	Dosa Place	Vegetarian / Vegan Restaurant	South Indian Restaurant	North Indian Restaurant	Chaat Place	Himalayan Restaurant	Food Court	Burrito Place
+9	Financial District	Indian Restaurant	Food Truck	Tapas Restaurant	Vegetarian / Vegan Restaurant	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place	Dumpling Restaurant
+10	Flatiron	Indian Restaurant	North Indian Restaurant	Food Truck	South Indian Restaurant	Burrito Place	Deli / Bodega	Diner	Himalayan Restaurant	Vegetarian / Vegan Restaurant	Dumpling Restaurant
+11	Gramercy	Indian Restaurant	South Indian Restaurant	North Indian Restaurant	Food Truck	Vegetarian / Vegan Restaurant	Burrito Place	Chaat Place	Deli / Bodega	Hookah Bar	Himalayan Restaurant
+12	Greenwich Village	Indian Restaurant	Food Truck	Dosa Place	North Indian Restaurant	Vegetarian / Vegan Restaurant	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dumpling Restaurant
+13	Hamilton Heights	Indian Restaurant	Vegetarian / Vegan Restaurant	Food Truck	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place	Dumpling Restaurant	Food Court
+14	Hudson Yards	Indian Restaurant	Food Truck	South Indian Restaurant	Diner	Vegetarian / Vegan Restaurant	Burrito Place	Chaat Place	Deli / Bodega	Dosa Place	Dumpling Restaurant
+15	Lenox Hill	Indian Restaurant	Asian Restaurant	North Indian Restaurant	Food Court	Food Truck	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place
+16	Lincoln Square	Indian Restaurant	Food Truck	South Indian Restaurant	Dumpling Restaurant	Vegetarian / Vegan Restaurant	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place
+17	Little Italy	Indian Restaurant	Dosa Place	North Indian Restaurant	Deli / Bodega	Himalayan Restaurant	Vegetarian / Vegan Restaurant	Food Court	Burrito Place	Chaat Place	Diner
+18	Lower East Side	Indian Restaurant	Vegetarian / Vegan Restaurant	South Indian Restaurant	North Indian Restaurant	Chaat Place	Deli / Bodega	Himalayan Restaurant	Food Court	Burrito Place	Diner
+19	Manhattan Valley	Indian Restaurant	Himalayan Restaurant	Vegetarian / Vegan Restaurant	Food Truck	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place	Dumpling Restaurant
+20	Manhattanville	Indian Restaurant	Vegetarian / Vegan Restaurant	Food Truck	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place	Dumpling Restaurant	Food Court
+21	Marble Hill	Indian Restaurant	Vegetarian / Vegan Restaurant	Food Truck	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place	Dumpling Restaurant	Food Court
+22	Midtown	Indian Restaurant	Food Truck	North Indian Restaurant	Dumpling Restaurant	South Indian Restaurant	Pakistani Restaurant	Diner	Vegetarian / Vegan Restaurant	Burrito Place	Chaat Place
+23	Midtown South	Indian Restaurant	Food Truck	South Indian Restaurant	Pakistani Restaurant	North Indian Restaurant	Himalayan Restaurant	Diner	Vegetarian / Vegan Restaurant	Dumpling Restaurant	Burrito Place
+24	Morningside Heights	Indian Restaurant	Himalayan Restaurant	Vegetarian / Vegan Restaurant	Food Truck	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place	Dumpling Restaurant
+25	Murray Hill	Indian Restaurant	Food Truck	South Indian Restaurant	North Indian Restaurant	Pakistani Restaurant	Himalayan Restaurant	Diner	Vegetarian / Vegan Restaurant	Dumpling Restaurant	Burrito Place
+26	Noho	Indian Restaurant	Dosa Place	Vegetarian / Vegan Restaurant	South Indian Restaurant	North Indian Restaurant	Chaat Place	Deli / Bodega	Himalayan Restaurant	Food Truck	Dumpling Restaurant
+27	Roosevelt Island	Indian Restaurant	Asian Restaurant	Food Court	Food Truck	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place	Dumpling Restaurant
+28	Soho	Indian Restaurant	Dosa Place	Food Truck	North Indian Restaurant	Deli / Bodega	Himalayan Restaurant	Vegetarian / Vegan Restaurant	Food Court	Burrito Place	Chaat Place
+29	Stuyvesant Town	Indian Restaurant	Vegetarian / Vegan Restaurant	South Indian Restaurant	North Indian Restaurant	Chaat Place	Deli / Bodega	Dosa Place	Food Court	Burrito Place	Diner
+30	Sutton Place	Indian Restaurant	Food Truck	Asian Restaurant	Food Court	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place	Dumpling Restaurant
+31	Tribeca	Indian Restaurant	Food Truck	Dosa Place	Tapas Restaurant	Vegetarian / Vegan Restaurant	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dumpling Restaurant
+32	Tudor City	Indian Restaurant	Asian Restaurant	South Indian Restaurant	Burrito Place	North Indian Restaurant	Music Store	Himalayan Restaurant	Food Truck	Dumpling Restaurant	Chaat Place
+33	Turtle Bay	Indian Restaurant	Food Truck	North Indian Restaurant	Food Court	Vegetarian / Vegan Restaurant	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place
+34	Upper East Side	Indian Restaurant	Grocery Store	North Indian Restaurant	Food Truck	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place	Dumpling Restaurant
+35	Upper West Side	Indian Restaurant	South Indian Restaurant	Vegetarian / Vegan Restaurant	Food Truck	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place	Dumpling Restaurant
+36	Washington Heights	Indian Restaurant	Vegetarian / Vegan Restaurant	Food Truck	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place	Dumpling Restaurant	Food Court
+37	West Village	Indian Restaurant	Food Truck	Vegetarian / Vegan Restaurant	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place	Dumpling Restaurant	Food Court
+38	Yorkville	Indian Restaurant	Grocery Store	North Indian Restaurant	Indian Chinese Restaurant	Food Court	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place
+
+-----------------------------------------------------------------------------------------------
+Results section where you discuss the results.
+-----------------------------------------------------------------------------------------------
+Based on the k-means clustering technique we could narrow down the 39 locations into 4 clusters. The cluster details are below. 
+Cluster 1
+NIC_merged.loc[NIC_merged['Cluster Labels'] == 0, NIC_merged.columns[[1] + list(range(5, NIC_merged.shape[1]))]]
+Neighborhood	1st Most Common Venue	2nd Most Common Venue	3rd Most Common Venue	4th Most Common Venue	5th Most Common Venue	6th Most Common Venue	7th Most Common Venue	8th Most Common Venue	9th Most Common Venue	10th Most Common Venue
+14	Clinton	Indian Restaurant	Food Truck	South Indian Restaurant	Diner	Dumpling Restaurant	Vegetarian / Vegan Restaurant	Burrito Place	Chaat Place	Deli / Bodega	Dosa Place
+15	Midtown	Indian Restaurant	Food Truck	North Indian Restaurant	Dumpling Restaurant	South Indian Restaurant	Pakistani Restaurant	Diner	Vegetarian / Vegan Restaurant	Burrito Place	Chaat Place
+16	Murray Hill	Indian Restaurant	Food Truck	South Indian Restaurant	North Indian Restaurant	Pakistani Restaurant	Himalayan Restaurant	Diner	Vegetarian / Vegan Restaurant	Dumpling Restaurant	Burrito Place
+17	Chelsea	Indian Restaurant	Food Truck	Vegetarian / Vegan Restaurant	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place	Dumpling Restaurant	Food Court
+21	Tribeca	Indian Restaurant	Food Truck	Dosa Place	Tapas Restaurant	Vegetarian / Vegan Restaurant	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dumpling Restaurant
+24	West Village	Indian Restaurant	Food Truck	Vegetarian / Vegan Restaurant	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place	Dumpling Restaurant	Food Court
+28	Battery Park City	Indian Restaurant	Food Truck	Tapas Restaurant	Vegetarian / Vegan Restaurant	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place	Dumpling Restaurant
+29	Financial District	Indian Restaurant	Food Truck	Tapas Restaurant	Vegetarian / Vegan Restaurant	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place	Dumpling Restaurant
+32	Civic Center	Indian Restaurant	Food Truck	Dosa Place	Tapas Restaurant	Vegetarian / Vegan Restaurant	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dumpling Restaurant
+33	Midtown South	Indian Restaurant	Food Truck	South Indian Restaurant	Pakistani Restaurant	North Indian Restaurant	Himalayan Restaurant	Diner	Vegetarian / Vegan Restaurant	Dumpling Restaurant	Burrito Place
+34	Sutton Place	Indian Restaurant	Food Truck	Asian Restaurant	Food Court	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place	Dumpling Restaurant
+35	Turtle Bay	Indian Restaurant	Food Truck	North Indian Restaurant	Food Court	Vegetarian / Vegan Restaurant	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place
+39	Hudson Yards	Indian Restaurant	Food Truck	South Indian Restaurant	Diner	Vegetarian / Vegan Restaurant	Burrito Place	Chaat Place	Deli / Bodega	Dosa Place	Dumpling Restaurant
+Cluster 2
+NIC_merged.loc[NIC_merged['Cluster Labels'] == 1, NIC_merged.columns[[1] + list(range(5, NIC_merged.shape[1]))]]
+Neighborhood	1st Most Common Venue	2nd Most Common Venue	3rd Most Common Venue	4th Most Common Venue	5th Most Common Venue	6th Most Common Venue	7th Most Common Venue	8th Most Common Venue	9th Most Common Venue	10th Most Common Venue
+1	Chinatown	Indian Restaurant	North Indian Restaurant	Deli / Bodega	Dosa Place	Himalayan Restaurant	Vegetarian / Vegan Restaurant	Food Court	Burrito Place	Chaat Place	Diner
+8	Upper East Side	Indian Restaurant	Grocery Store	North Indian Restaurant	Food Truck	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place	Dumpling Restaurant
+9	Yorkville	Indian Restaurant	Grocery Store	North Indian Restaurant	Indian Chinese Restaurant	Food Court	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place
+10	Lenox Hill	Indian Restaurant	Asian Restaurant	North Indian Restaurant	Food Court	Food Truck	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place
+11	Roosevelt Island	Indian Restaurant	Asian Restaurant	Food Court	Food Truck	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place	Dumpling Restaurant
+13	Lincoln Square	Indian Restaurant	Food Truck	South Indian Restaurant	Dumpling Restaurant	Vegetarian / Vegan Restaurant	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place
+18	Greenwich Village	Indian Restaurant	Food Truck	Dosa Place	North Indian Restaurant	Vegetarian / Vegan Restaurant	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dumpling Restaurant
+19	East Village	Indian Restaurant	Deli / Bodega	Dosa Place	Vegetarian / Vegan Restaurant	South Indian Restaurant	North Indian Restaurant	Chaat Place	Himalayan Restaurant	Food Court	Burrito Place
+20	Lower East Side	Indian Restaurant	Vegetarian / Vegan Restaurant	South Indian Restaurant	North Indian Restaurant	Chaat Place	Deli / Bodega	Himalayan Restaurant	Food Court	Burrito Place	Diner
+22	Little Italy	Indian Restaurant	Dosa Place	North Indian Restaurant	Deli / Bodega	Himalayan Restaurant	Vegetarian / Vegan Restaurant	Food Court	Burrito Place	Chaat Place	Diner
+23	Soho	Indian Restaurant	Dosa Place	Food Truck	North Indian Restaurant	Deli / Bodega	Himalayan Restaurant	Vegetarian / Vegan Restaurant	Food Court	Burrito Place	Chaat Place
+25	Manhattan Valley	Indian Restaurant	Himalayan Restaurant	Vegetarian / Vegan Restaurant	Food Truck	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place	Dumpling Restaurant
+26	Morningside Heights	Indian Restaurant	Himalayan Restaurant	Vegetarian / Vegan Restaurant	Food Truck	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place	Dumpling Restaurant
+31	Noho	Indian Restaurant	Dosa Place	Vegetarian / Vegan Restaurant	South Indian Restaurant	North Indian Restaurant	Chaat Place	Deli / Bodega	Himalayan Restaurant	Food Truck	Dumpling Restaurant
+36	Tudor City	Indian Restaurant	Asian Restaurant	South Indian Restaurant	Burrito Place	North Indian Restaurant	Music Store	Himalayan Restaurant	Food Truck	Dumpling Restaurant	Chaat Place
+38	Flatiron	Indian Restaurant	North Indian Restaurant	Food Truck	South Indian Restaurant	Burrito Place	Deli / Bodega	Diner	Himalayan Restaurant	Vegetarian / Vegan Restaurant	Dumpling Restaurant
+Cluster 3
+NIC_merged.loc[NIC_merged['Cluster Labels'] == 2, NIC_merged.columns[[1] + list(range(5, NIC_merged.shape[1]))]]
+Neighborhood	1st Most Common Venue	2nd Most Common Venue	3rd Most Common Venue	4th Most Common Venue	5th Most Common Venue	6th Most Common Venue	7th Most Common Venue	8th Most Common Venue	9th Most Common Venue	10th Most Common Venue
+0	Marble Hill	Indian Restaurant	Vegetarian / Vegan Restaurant	Food Truck	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place	Dumpling Restaurant	Food Court
+2	Washington Heights	Indian Restaurant	Vegetarian / Vegan Restaurant	Food Truck	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place	Dumpling Restaurant	Food Court
+4	Hamilton Heights	Indian Restaurant	Vegetarian / Vegan Restaurant	Food Truck	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place	Dumpling Restaurant	Food Court
+5	Manhattanville	Indian Restaurant	Vegetarian / Vegan Restaurant	Food Truck	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place	Dumpling Restaurant	Food Court
+6	Central Harlem	Indian Restaurant	Vegetarian / Vegan Restaurant	Food Truck	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place	Dumpling Restaurant	Food Court
+7	East Harlem	Indian Restaurant	Vegetarian / Vegan Restaurant	Food Truck	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place	Dumpling Restaurant	Food Court
+12	Upper West Side	Indian Restaurant	South Indian Restaurant	Vegetarian / Vegan Restaurant	Food Truck	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place	Dumpling Restaurant
+Cluster 4
+NIC_merged.loc[NIC_merged['Cluster Labels'] == 3, NIC_merged.columns[[1] + list(range(5, NIC_merged.shape[1]))]]
+Neighborhood	1st Most Common Venue	2nd Most Common Venue	3rd Most Common Venue	4th Most Common Venue	5th Most Common Venue	6th Most Common Venue	7th Most Common Venue	8th Most Common Venue	9th Most Common Venue	10th Most Common Venue
+27	Gramercy	Indian Restaurant	South Indian Restaurant	North Indian Restaurant	Food Truck	Vegetarian / Vegan Restaurant	Burrito Place	Chaat Place	Deli / Bodega	Hookah Bar	Himalayan Restaurant
+30	Carnegie Hill	Indian Restaurant	Grocery Store	North Indian Restaurant	Indian Chinese Restaurant	Food Court	Burrito Place	Chaat Place	Deli / Bodega	Diner	Dosa Place
+37	Stuyvesant Town	Indian Restaurant	Vegetarian / Vegan Restaurant	South Indian Restaurant	North Indian Restaurant	Chaat Place	Deli / Bodega	Dosa Place	Food Court	Burrito Place	Diner
+
+
+-----------------------------------------------------------------------------------------------------------------------------
+Discussion section where you discuss any observations you noted and any recommendations you can make based on the results.
+-----------------------------------------------------------------------------------------------------------------------------
+We analyzed four clusters above.
+
+Cluster 1 has 13, Cluster has 16, Cluster 3 has 7 and Cluster 4 has 3 Indian Cuisines.
+
+Clearly Cluster 1 and Cluster 2 are NOT suitable for starting a new Indian Cuisine as it is highly already crowded.
+
+Cluster 3 and 4 has good options. Lets first analyze Cluster 3.
+
+CLUSTER 3 ANALYSIS: Very interesting data. This cluster is flooded by Vegetarian restaurant, fast food place like food truck, 
+burito place, chaat place, deli, diner, dosa place, a Himalayan cuisine and then food court. So this place clearly lacks few things 
+like an authentic IndoChinese Cuisine, an Indian Pizza place, a grocery store to quickly supply materials for cuisine to run efficiently, 
+authentic multi Indian dish serving cuisine where both vegetarian and non vegetarian food can be made available. We have 7 places 
+covered in this cluster and pretty much all of them follow the same pattern of Indian cuisines due to close neighborhood boundary may be.
+
+CLUSTER 4 ANALYSIS: This cluster covers little away from the other crowded Manhattan place. Gramercy, Carnegie Hill and Stuyvesant Town 
+are the only places in this cluster where we find some Indian cuisine.
+
+Secondly, Carnegie Hill has a grocery store near by to cater to all needs for a cuisine. The Carnegie Hill location is also flooded with 
+North Indian, Dosa Place, Burito or Chaat place. There is no full fledged SOUTH INDIAN CUISINE in this location. So my brother's family 
+can start a full South Indian Cuisine with attached fast food service in Carnegie Hill which also can cater its Sweet supplies to the near 
+by grocery shop. In addition since this could be also catering to both fine dinning experience and a fast food drive thru, it has an edge over 
+other locations and cuisines. Serving dishes that mainly focusses on south Indian delicacies, steam cooked dishes like momo (for 
+Himanlayan cuisince flavor), a Chinese line of products would all completment and provide an edge in this location. 
+-----------------------------------------------------------------------------------------------------------------------------
+
+
+-----------------------------------------------------------------------------------------------------------------------------
+Conclusion section where you conclude the report.
+-----------------------------------------------------------------------------------------------------------------------------
+To Conclude, based on this analysis, my brother's family can start an Indian cuisine which mainly focusses on catering fine 
+dinning of authentic South Indian dishes, Steam cooked food, drive thru fast food, sweet product catering to the near by Grocery shop for sale 
+in the Carnegie Hill location. Also this location is less impacted with public traffic movement and at the same time connected with public
+transportation. The neighborhood is busy and highly populated to keep the business thriving. Any Manhattan school zone near by will also
+benefit in addition as families who go around in the neighborhood can pick up to-go food from this restaurant. The presence of a grocery shop in 
+the vicinity helps to keep the supply of raw materials always available for cooking needs. In addition, any manufactured sweets and frozen food
+from the new Indian cuisince can be supplied for sale to the local grocery shop. Overall the location Carnegie Hill is providing good advantage 
+and business prospect. 
+
+-----------------------------------------------------------------------------------------------------------------------------
 
 
